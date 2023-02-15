@@ -22,16 +22,16 @@ check_program () {
 
 # Gets filename without extension from path
 get_filename () {
-	temp="${1%.*}"
+	local temp="${1%.*}"
 	filename="${temp##*/}"
 }
 
 # Convert markdown to HTML
 convert_to_html () {
-	INDIR="$1"; OUTDIR="$2";
+	local indir="$1"; local outdir="$2";
 
-	for line in ${INDIR}/*; do
+	for line in ${indir}/*; do
 		get_filename "$line"
-	       	markdown < "$line" > "${OUTDIR}/${filename}.html";
+	       	markdown < "$line" > "${outdir}/${filename}.html";
 	done
 }

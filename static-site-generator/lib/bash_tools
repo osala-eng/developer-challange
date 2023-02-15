@@ -1,0 +1,40 @@
+#!/bin/bash
+# Simple bash tools
+
+# Output colors
+GREEN='\033[0;32m'; RED='\033[0;31m'; NC='\033[0m';
+
+# Wait prompt when running a forked process
+# Usage bash_wait pid wait-message success-message
+bash_wait () {
+	local pid="$1"; local msg="$2";
+	local clear_line="\x1b[2K\x1b[1A\x1b[2Kx1b[1A\x1b[2K\x1b[G"
+	local status=("." ".." "...")
+	local final="Done"
+
+	if [ "$#" -ge 3 ]; then
+		final="$3";
+	fi
+
+	if [ "$#" -lt 2 ]; then
+		echo -e "Too few params ..."
+		echo -e "Usage: bash_wait pid wait-message end-message"
+		return 1 
+	fi
+
+	while [ 1 ]; do
+		for i in ${status[@]}; do
+			if ps -p "$pid" > /dev/null
+	       			then
+				echo -e "${clear_line}${msg}: $i"
+				sleep .5s
+			else
+				echo -e "${clear_line}${GREEN}${final}${NC}" && break;
+			fi
+		done
+
+		if ! ps -p "$pid" > /dev/null; then
+			echo -e "${clear_line}${GREEN}${final}${NC}" && break;
+		fi
+	done
+}

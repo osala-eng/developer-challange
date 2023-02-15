@@ -4,7 +4,7 @@
 source ./support_files
 
 # Variables 
-OUTDIR="build";
+OUTDIR="build/pages";
 INDIR="$1";
 
 mkdir -p "$OUTDIR";
