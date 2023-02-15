@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Import functions from support_files
+
+# Import functions
+source ./bash_tools
 source ./support_files
 
 # Variables 
@@ -9,7 +11,10 @@ INDIR="$1";
 
 mkdir -p "$OUTDIR";
 
-check_program markdown # Check if mardown exists if not install it
+# Check if markdown exists
+check_program markdown &
+bash_wait $! "Checking if markdown exists" 
 
 # Convert Markdown to HTML 
-convert_to_html "$INDIR" "$OUTDIR";
+convert_to_html "$INDIR" "$OUTDIR" &
+bash_wait $! "Converting markdown files to html, please wait"
