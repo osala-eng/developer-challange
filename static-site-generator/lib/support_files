@@ -67,8 +67,10 @@ Cleanup() {
 node_js_setup() {
 	export NODE_PATH="$(npm list -g | head -1)/node_modules"
 	for module in $@; do
-		if ! npm list -g | grep "$module"; then
-			npm install -g $module
+		if npm list -g | grep -q "$module"; then
+			continue
+		else
+			npm install -g "$module"
 		fi
 	done
 }
@@ -92,4 +94,9 @@ remove_meta() {
 	for filename in $@; do
 		sed -i '/---/,/---/d' "$filename"
 	done
+}
+
+# Run css build
+run_sassy_css () {
+	sass "$1" "$2"
 }
