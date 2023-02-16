@@ -5,33 +5,91 @@
 NULL="/dev/null"
 UPDATE=0
 
+# Test empty dir
+dir_is_empty() {
+	test -e "$1/"* 2>/dev/null
+	case $? in
+	1) return 1 ;;
+	*) return 0 ;;
+	esac
+}
+
 # Run apt update
-run_update () {
-	[[ $((UPDATE)) -eq 1 ]] && return;
-	apt-get update -y;
-	UPDATE=1;
+run_update() {
+	[[ $((UPDATE)) -eq 1 ]] && return
+	apt-get update -y
+	UPDATE=1
+}
+
+# Local install configuration
+local_install_config() {
+	case $1 in
+	"node") node_installer ;;
+	*) apt-get install $1 -y ;;
+	esac
 }
 
 # Check if a programme is available
-check_program () {
-	if ! command -v "$1" &> "$NULL"; then
-		[[ $((UPDATE)) -eq 0 ]] && run_update
-		apt-get install $1 -y;
-	fi
+check_program() {
+	for i in $@; do
+		if ! command -v "$i" &>"$NULL"; then
+			[[ $((UPDATE)) -eq 0 ]] && run_update
+			local_install_config $i
+		fi
+	done
 }
 
 # Gets filename without extension from path
-get_filename () {
+get_filename() {
 	local temp="${1%.*}"
 	filename="${temp##*/}"
 }
 
 # Convert markdown to HTML
-convert_to_html () {
-	local indir="$1"; local outdir="$2";
+convert_to_html() {
+	local indir="$1"
+	local outdir="$2"
 
 	for line in ${indir}/*; do
 		get_filename "$line"
-	       	markdown < "$line" > "${outdir}/${filename}.html";
+		markdown <"$line" >"${outdir}/${filename}.html"
+	done
+}
+
+# Cleanup function
+Cleanup() {
+	for i in $@; do
+		rm -rf "$i"
+	done
+}
+
+# Nodejs Setup path and installs
+node_js_setup() {
+	export NODE_PATH="$(npm list -g | head -1)/node_modules"
+	for module in $@; do
+		if ! npm list -g | grep "$module"; then
+			npm install -g $module
+		fi
+	done
+}
+
+# Shebang install templates with the right bin bath
+shebang_js() {
+	local node_bin="#!$(which node)"
+	for filename in $@; do
+		sed -i "1s|^.*$|$node_bin|" "$filename"
+	done
+}
+
+# Prints a line and appends an empty line at the end
+print_line() {
+	echo -e "$1"
+	echo -e
+}
+
+# Remove metadata from files
+remove_meta() {
+	for filename in $@; do
+		sed -i '/---/,/---/d' "$filename"
 	done
 }
