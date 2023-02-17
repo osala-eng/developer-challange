@@ -6,6 +6,17 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
 
+non_blocking_wait() {
+    PID=$1
+    if [ ! -d "/proc/$PID" ]; then
+        wait $PID
+        CODE=$?
+    else
+        CODE=127
+    fi
+    return $CODE
+}
+
 # Wait prompt when running a forked process
 # Usage bash_wait pid wait-message success-message
 bash_wait() {

@@ -88,6 +88,10 @@ a {
     color: $--accent-color;
 }
 
+ul {
+    margin: .5rem 1rem .5rem 3rem;
+}
+
 .copy-btn {
     position: absolute;
     top: 4px;
@@ -117,4 +121,8 @@ a {
     color: black;
     font-size: 1rem;
     font-weight: 500;
+}
+
+.fa-file-check {
+    color: green;
 }

@@ -16,7 +16,9 @@ const copyCode = async (block, copyIcon) => {
   await navigator.clipboard.writeText(text)
     .then(() => {
       notify.style.display = 'block'
-      setTimeout(() => (notify.style.display = 'none'), 2000)
+      setTimeout(() => {
+        notify.style.display = 'none';
+      }, 2000)
     })
 }
 

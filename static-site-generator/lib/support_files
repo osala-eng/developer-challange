@@ -46,15 +46,22 @@ get_filename() {
 	filename="${temp##*/}"
 }
 
+get_filepath () {
+	local indir="$2"
+	local outdir="$3"
+	local temp="${1%/*}"
+	filepath=$(echo $temp | sed "s|$indir|$outdir|")
+}
+
 # Convert markdown to HTML
 convert_to_html() {
 	local indir="$1"
 	local outdir="$2"
 
-	for line in ${indir}/*; do
+	for line in $(find "$indir"/* -type f); do
 		get_filename "$line"
-		showdown makehtml -i "$line" -o "${outdir}/${filename}.html"
-
+		get_filepath "$line" "$indir" "$outdir"
+		showdown makehtml -i "$line" -o "${filepath}/${filename}.html"
 		#markdown <"$line" >"${outdir}/${filename}.html"
 	done
 }
@@ -97,7 +104,7 @@ print_line() {
 
 # Remove metadata from files
 remove_meta() {
-	for filename in $@; do
+	for filename in $( find "$1"/* -type f ); do
 		sed -i '/---/,/---/d' "$filename"
 	done
 }
@@ -105,4 +112,14 @@ remove_meta() {
 # Run css build
 run_sassy_css() {
 	sass "$1" "$2"
+}
+
+# Create all output paths
+create_all_build_paths() {
+	local indir="$1"
+	local outdir="$2"
+	for line in $(find "$indir"/* -type d); do
+		local filepath=$(echo "$line" | sed "s|$indir|$outdir|")
+		mkdir -p "$filepath"
+	done
 }

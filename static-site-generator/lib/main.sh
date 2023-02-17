@@ -21,10 +21,9 @@ source ./bash_tools
 source ./support_files
 
 # Declare Variables
-REQUIRED_PROGRAMS=("markdown" "node")
+REQUIRED_PROGRAMS=("node")
 REQUIRED_MODULES=("sass" "showdown")
 BUILDDIR="build"
-OUTDIR="build/pages"
 INDIR="$1"
 TMPDIR=".tmp"
 WORK_MD="${TMPDIR}/md"
@@ -35,66 +34,99 @@ JSLIB="$RUNDIR/js"
 METAJSON="$TMPDIR/meta.json"
 HTMLMASTER="htmltemplates/master.html"
 SASSY_IN="htmltemplates/styles/main.scss"
-SASSY_OUT="$OUTDIR/main.css"
+SASSY_OUT="$BUILDDIR/main.css"
 ASSETS="htmltemplates/assets"
 SCRIPTS="htmltemplates/scripts"
+LOGFILE="/var/log/staticgen/staticgen.log"
+ERRORFILE="/var/log/staticgen/staticgen.error"
 
 # Check if markdown dir is empty
-dir_is_empty "$INDIR"
-[[ "$?" -eq 1 ]] && echo -e "$1 is an empty dir" && exit 1
+check_markdown_dir() {
+    dir_is_empty "$INDIR"
+    [[ "$?" -eq 1 ]] && echo -e "$INDIR is an empty dir" && exit 1
+}
 
-dir_is_empty "$BUILDDIR"
-[[ "$?" -eq 0 ]] && Cleanup "$BUILDDIR"
+# Create setup data
+create_setup_data() {
+    dir_is_empty "$BUILDDIR"
+    [[ "$?" -eq 0 ]] && Cleanup "$BUILDDIR"
 
-# Create build and working directories
-mkdir -p "$OUTDIR" "$WORK_MD" "$RUNDIR"
+    # Create build and working directories
+    mkdir -p "$BUILDDIR" "$RUNDIR"
+
+    # Copy file templates to working dir
+    if [ -d "$WORK_MD" ]; then
+        print_line "Foud old files cleaning..."
+        rm -rf "$WORK_MD"
+    fi
+    cp -r "$INDIR" "$WORK_MD"
+
+    # Copy js modules and files to run
+    cp -r js "$RUNDIR/"
+    cp *.mjs "$RUNDIR/"
+
+    # Create all build paths
+    create_all_build_paths "$INDIR" "$BUILDDIR"
+
+    # Copy assets to build dir
+    cp -r "$ASSETS" "$BUILDDIR/"
+    cp -r "$SCRIPTS" "$BUILDDIR/"
+}
 
 # Check if markdown exists
-print_line "Checking required programs"
-check_program "$REQUIRED_PROGRAMS" >"$NULL" 2>&1 &
-bash_wait $! "Please wait"
-
-# Copy file templates to working dir
-cp "$INDIR"/* "${TMPDIR}/md/"
-
-# Copy js modules and files to run
-cp -r js "$RUNDIR/"
-cp *.mjs "$RUNDIR/"
+run_check_programs() {
+    print_line "Running check for required programs"
+    for prog in "${REQUIRED_PROGRAMS[@]}"; do
+        print_line "Checking for $prog"
+        check_program "$prog" >>"$LOGFILE" 2>>"$ERRORFILE" &
+        bash_wait $! "Please wait"
+    done
+}
 
 # Setup nodejs
-print_line "Running nodejs setup"
-for module in "${REQUIRED_MODULES[@]}"; do
-    node_js_setup "$module" # >"$NULL" 2>&1 &
-done
-bash_wait $! "Installing please wait"
+run_setup_nodejs() {
+    print_line "Running nodejs setup"
+    for module in "${REQUIRED_MODULES[@]}"; do
+        print_line "Locating module $module"
+        node_js_setup "$module" >"$LOGFILE" 2>"$ERRORFILE" &
+        bash_wait $! "Please wait"
+    done
+}
 
 # Extract meta-data from from markdown files
-echo -e "Extracting metadata from files"
-shebang_js "$JSMETATOOL" "$JSHTMLTOOL" "$JSLIB"/*.mjs
-"$JSMETATOOL" "$INDIR" "$TMPDIR"
+run_extract_metadata() {
+    echo -e "Extracting metadata from files"
+    shebang_js "$JSMETATOOL" "$JSHTMLTOOL" "$JSLIB"/*.mjs
+    "$JSMETATOOL" "$INDIR" "$TMPDIR"
 
-# Remove meta-data in workdir files
-remove_meta "$WORK_MD"/*
+    # Remove meta-data in workdir files
+    remove_meta "$WORK_MD"
+}
 
 # Convert Markdown to HTML
-print_line "Converting markdown to html"
-convert_to_html "$WORK_MD" "$OUTDIR" &
-bash_wait $! "Please wait"
+run_convert_to_html() {
+    print_line "Converting markdown to html"
+    convert_to_html "$WORK_MD" "$BUILDDIR" >>"$LOGFILE" 2>>"$ERRORFILE" &
+    bash_wait $! "Please wait"
+}
 
 # Update html files using template
-print_line "Updating html files"
-"$JSHTMLTOOL" "$METAJSON" "$OUTDIR" "$HTMLMASTER"
+run_updata_html_meta_data() {
+    print_line "Updating html files"
+    "$JSHTMLTOOL" "$METAJSON" "$BUILDDIR" "$HTMLMASTER" >>"$LOGFILE" 2>>"$ERRORFILE" &
+    bash_wait $! "Please wait"
+}
 
 # Generate css
-print_line "Generating css from templates"
-run_sassy_css "$SASSY_IN" "$SASSY_OUT" >"$NULL" 2>&1 &
-bash_wait $! "Generating" "Succefully generated"
-
-# Copy assets to build dir
-cp -r "$ASSETS" "$OUTDIR/"
-cp -r "$SCRIPTS" "$OUTDIR/"
+run_generate_css() {
+    print_line "Generating css from sassy templates"
+    run_sassy_css "$SASSY_IN" "$SASSY_OUT" >>"$LOGFILE" 2>>"$ERRORFILE" &
+    bash_wait $! "Generating" "Succefully generated"
+}
 
 # Run cleanup function
-print_line "Cleaning temporary files"
-Cleanup "$TMPDIR" &
-bash_wait $! "Running cleanup" "Success"
+run_cleanup() {
+    print_line "Cleaning temporary files"
+    Cleanup "$TMPDIR" &
+    bash_wait $! "Running cleanup" "Success"
+}
