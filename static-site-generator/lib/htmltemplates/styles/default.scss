@@ -1,23 +1,120 @@
-#root-element-div {
-    margin: auto;
-    padding: auto 10px;
-    width: fit-content;
-    max-width: 800px;
+$--width: 800px;
+$--accent-color: rgb(12, 128, 118);
+$--dodger-blue: DodgerBlue;
+$--border-color: #e7f2ea;
+$--highlight: rgb(39, 80, 100);
+
+@mixin code-highlight-color {
+    color: white;
+    background-color: $--highlight;
+    padding: 1px 4px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-code {
-    background: #f4f4f4;
-    border: 1px solid #ddd;
-    border-left: 3px solid #f36d33;
-    color: #666;
-    page-break-inside: avoid;
-    font-family: monospace;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 1.6em;
-    max-width: 100%;
-    overflow: auto;
-    padding: 1em 1.5em;
-    display: block;
-    word-wrap: break-word;
+#root-element-div {
+    margin: 5rem auto 3rem auto;
+    padding: 1rem 4rem;
+    width: $--width;
+    max-width: 1080px;
+    border: 0.5px solid $--border-color;
+    border-radius: 8px;
+
+    img {
+        max-width: $--width;
+    }
+}
+
+.btn {
+    background-color: $--accent-color;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: fit-content;
+    height: 100%;
+    padding: 0 0.5rem;
+
+    &:hover {
+        background-color: white;
+        color: black;
+    }
+}
+
+footer {
+    margin-top: 1rem;
+    border-top: 1px solid rgb(164, 161, 161);
+    height: 100px;
+
+    h4 {
+        margin-top: 1rem;
+        text-align: center;
+    }
+}
+
+pre {
+    // box-shadow: 1px 1px .5px rgb(88, 83, 83);
+    margin-bottom: 1rem;
+    position: relative;
+    display: grid;
+
+    code {
+        border-radius: 8px;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-align: center;
+    margin-bottom: 1rem;
+    code {
+        @include code-highlight-color();
+    }
+}
+
+p {
+    margin-bottom: 0.5rem;
+    code {
+        @include code-highlight-color();
+    }
+}
+
+a {
+    text-decoration: none;
+    color: $--accent-color;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    border: none;
+    color: $--highlight;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: transparent;
+
+    &:hover {
+        background-color: rgb(145, 126, 126);
+        color: rgb(255, 255, 255);
+    }
+}
+
+.text-to-clipboard {
+    position: absolute;
+    top: -2rem;
+    color: black;
+    font-size: 1rem;
+    font-weight: 500;
 }

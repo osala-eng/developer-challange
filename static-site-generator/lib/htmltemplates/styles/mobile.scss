@@ -1,0 +1,9 @@
+@media only screen and (max-width: 600px) {
+  #root-element-div {
+    width: 100%;
+
+    img {
+      max-width: 100%;
+    }
+  }
+}

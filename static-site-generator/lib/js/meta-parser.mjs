@@ -103,6 +103,7 @@ export class HtmlMetaUpdate {
   'meta-data'; 'html-data' = {};
   'head-match' = /{{*.head-data.*}}/i;
   'body-match' = /{{*.body-data.*}}/i;
+  'code-match' = /<pre>/gmi;
 
   /**
    * Class constructor requires passing an array of paths for build
@@ -149,6 +150,9 @@ export class HtmlMetaUpdate {
     const { head, body } = update;
     const addhead = newdoc.replace(this['head-match'], head);
     const addbody = addhead.replace(this['body-match'], body);
+
+    // const match = addbody.replace(this['code-match'], `$&${this['copy-button-template']()}`)
+
     return addbody;
   }
 
@@ -198,4 +202,14 @@ export class HtmlMetaUpdate {
    * @returns HTML template string
    */
   'meta-line-template' = (name, content) => `<meta name=${name} content=${content}/>`
+
+  /**
+   * Creates a copy icon within an html code block statement
+   * @returns Part of html code block with icon
+   */
+  'copy-button-template' = () => `
+  <button class="copy-btn">
+    <i class="fa-regular fa-copy"></i>
+  </button>
+  `;
 }

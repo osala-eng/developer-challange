@@ -22,7 +22,7 @@ source ./support_files
 
 # Declare Variables
 REQUIRED_PROGRAMS=("markdown" "node")
-REQUIRED_MODULES=("sass")
+REQUIRED_MODULES=("sass" "showdown")
 BUILDDIR="build"
 OUTDIR="build/pages"
 INDIR="$1"
@@ -36,6 +36,8 @@ METAJSON="$TMPDIR/meta.json"
 HTMLMASTER="htmltemplates/master.html"
 SASSY_IN="htmltemplates/styles/main.scss"
 SASSY_OUT="$OUTDIR/main.css"
+ASSETS="htmltemplates/assets"
+SCRIPTS="htmltemplates/scripts"
 
 # Check if markdown dir is empty
 dir_is_empty "$INDIR"
@@ -61,7 +63,9 @@ cp *.mjs "$RUNDIR/"
 
 # Setup nodejs
 print_line "Running nodejs setup"
-node_js_setup "$REQUIRED_MODULES" >"$NULL" 2>&1 &
+for module in "${REQUIRED_MODULES[@]}"; do
+    node_js_setup "$module" # >"$NULL" 2>&1 &
+done
 bash_wait $! "Installing please wait"
 
 # Extract meta-data from from markdown files
@@ -83,8 +87,12 @@ print_line "Updating html files"
 
 # Generate css
 print_line "Generating css from templates"
-run_sassy_css "$SASSY_IN" "$SASSY_OUT" > "$NULL" 2>&1 &
+run_sassy_css "$SASSY_IN" "$SASSY_OUT" >"$NULL" 2>&1 &
 bash_wait $! "Generating" "Succefully generated"
+
+# Copy assets to build dir
+cp -r "$ASSETS" "$OUTDIR/"
+cp -r "$SCRIPTS" "$OUTDIR/"
 
 # Run cleanup function
 print_line "Cleaning temporary files"
