@@ -67,11 +67,12 @@ If metadata is provided then both `title` and `path` from the meta-data is used
 ---
 title: will be the page title
 description: will be passed as meta-data in the html file
-category: can be `article`, `page` or `aboutus` if article then it will be displayed in homepage as an article, if page then a page is created and a link provided in the homepage, if `aboutus` then it will be used in the aboutus page
+category: can be `article`, `page` or `aboutus` if article then it will be displayed in homepage as an article,
+if page then a page is created and a link provided in the homepage, if `aboutus` then it will be used in the aboutus page
 path: will be used as the path to access the page
 ---
 ```
 Any other meta-data passed outside the above will be forwarded to the html document  generated in the `<meta>` tag
 
 Author: [Jashon Osala](https://github.com/osala-eng)
-[Repository](https://github.com/osala-eng/developer-challange)
+View Repository: [Repository](https://github.com/osala-eng/developer-challange)
