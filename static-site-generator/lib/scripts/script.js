@@ -1,5 +1,5 @@
 const goHome = () => {
-  window.location = '/';
+  window.location = '/homepage.html';
 }
 const showMenu = (data) => console.log(data);
 const blocks = document.querySelectorAll('pre');

@@ -71,7 +71,7 @@ category: can be `article`, `page` or `aboutus` if article then it will be displ
 path: will be used as the path to access the page
 ---
 ```
-Any other meta-data passed outside this will be forwarded to the html document `meta` tag
+Any other meta-data passed outside the above will be forwarded to the html document  generated in the `<meta>` tag
 
 Author: [Jashon Osala](https://github.com/osala-eng)
 [Repository](https://github.com/osala-eng/developer-challange)
