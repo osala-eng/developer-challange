@@ -1,3 +1,10 @@
+---
+title: staticgen
+description: A simple static site generator
+category: sigle-page
+path: staticgen.html 
+---
+
 # Static-site generator
 
 This is a simple static site generator that creates static websites from markdown files
@@ -12,7 +19,7 @@ sudo ./install
 `staticgen` requires `nodejs`, and modules `showdown`, `sass`, and `serve` to generate builds, the installer will check if these are available during installation, if not, the installer automatically installs them.
 
 #### nodejs
-Nodejs is required to run javascript codes locally and can be found from the official nodejs website [nodeorg](https://nodejs-site)
+Nodejs is required to run javascript codes locally and can be found from the official nodejs website [nodeorg](https://nodejs.org)
 
 #### showdown
 This is required to converd markdown syntaxing to HTML5 tags and can be installed by running
