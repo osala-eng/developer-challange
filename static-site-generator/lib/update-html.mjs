@@ -1,4 +1,4 @@
-#! shebang
+#!/bin/node
 
 /**
  * Update the generated html files using an html file template

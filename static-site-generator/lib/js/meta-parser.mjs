@@ -6,10 +6,45 @@
  * github: https://github.com/osala-eng
  */
 
-import { readdirSync, readFileSync, writeFileSync } from 'fs';
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
 import path from 'path';
 
-export class DataFile {
+
+class FsTools {
+  /**
+  * Gets files in the mark-down dir and saves them in this.files
+  * @param {string} dirpath path string
+  * @param {string []} filesarray Array containing files
+  * @returns files array
+  */
+  getAllFiles = (dirpath, filesarray) => {
+    const files = readdirSync(dirpath);
+    filesarray = filesarray || [];
+
+    files.forEach(file => {
+      const __path = path.join(dirpath, file);
+      if (statSync(__path).isDirectory())
+        filesarray = this.getAllFiles(__path, filesarray);
+      else
+        filesarray.push(__path);
+    });
+    return filesarray
+  }
+
+  /**
+   * Get filekey from path without ext name and root dir
+   * @param {string} filePath path string
+   * @param {string} rootDir root directory name
+   */
+  getFilekey = (filePath, rootDir) => {
+    const { ext } = path.parse(filePath);
+    const __filekey = filePath.replace(`${rootDir}/`, '');
+    const filekey = __filekey.replace(ext, '');
+    return filekey;
+  }
+}
+
+export class DataFile extends FsTools {
   'meta-data' = {};
   'meta-match' = /^(?:\-\-\-)(.*?)(?:\-\-\-|\.\.\.)/s;
 
@@ -22,16 +57,18 @@ export class DataFile {
   constructor(
     [markdownDir, outDir] = process.argv.slice(2)
   ) {
+    super()
     this.markdownDir = markdownDir;
     this.outDir = outDir;
     this.#generateData();
   }
 
   /**
-   * Gets files in the mark-down dir and saves them in this.files
-   * @returns void
+   * Reads directory syncronously to find all files
    */
-  #getFiles = () => (this.files = readdirSync(this.markdownDir));
+  #setFiles = () => {
+    this.files = this.getAllFiles(this.markdownDir);
+  }
 
   /**
    * Gets meta-data from markdown files and stores the result in this
@@ -39,16 +76,16 @@ export class DataFile {
    */
   #getFilesMeta = () => {
     this.files.every(file => {
-      const filepath = path.join(this.markdownDir, file)
-      const fileData = readFileSync(filepath).toString();
+      const fileData = readFileSync(file).toString();
       const meta = fileData.match(this['meta-match']);
-      const { name } = path.parse(file);
+      const { name, dir, ext } = path.parse(file);
+      const filekey = this.getFilekey(file, this.markdownDir);
       // append filename as title if no meta
       if (!meta) {
-        this['meta-data'][name] = {
+        this['meta-data'][filekey] = {
           ['meta']: {
             title: name,
-            path: name + '.html'
+            path: filekey + '.html'
           }
         }
         return true;
@@ -58,15 +95,15 @@ export class DataFile {
       meta[1].split('\n').forEach(line => {
         const [key, value] = line.split(':');
         if (key && value) {
-          if (this['meta-data'][name]) {
-            this['meta-data'][name] = {
+          if (this['meta-data'][filekey]) {
+            this['meta-data'][filekey] = {
               ['meta']: {
-                ...this['meta-data'][name]['meta'],
+                ...this['meta-data'][filekey]['meta'],
                 [key.trim()]: value.trim()
               }
             }
           } else {
-            this['meta-data'][name] = {
+            this['meta-data'][filekey] = {
               ['meta']: {
                 [key.trim()]: value.trim()
               }
@@ -90,7 +127,7 @@ export class DataFile {
    * Generate data
    */
   #generateData = () => {
-    this.#getFiles();
+    this.#setFiles();
     this.#getFilesMeta();
     this.#saveMetadata();
   }
@@ -99,7 +136,7 @@ export class DataFile {
 
 
 
-export class HtmlMetaUpdate {
+export class HtmlMetaUpdate extends FsTools {
   'meta-data'; 'html-data' = {};
   'head-match' = /{{*.head-data.*}}/i;
   'body-match' = /{{*.body-data.*}}/i;
@@ -115,6 +152,7 @@ export class HtmlMetaUpdate {
   constructor(
     [jsonpath, buildpath, template] = process.argv.slice(2)
   ) {
+    super();
     this.jsonpath = jsonpath;
     this.buildpath = buildpath;
     this.template = readFileSync(template).toString();
@@ -137,7 +175,7 @@ export class HtmlMetaUpdate {
    * Read the build dir for all the html files available
    * @returns void
    */
-  #getHtmlFiles = () => (this.files = readdirSync(this.buildpath));
+  #getHtmlFiles = () => (this.files = this.getAllFiles(this.buildpath));
 
   /**
    * Matches the required sections and updates them with the correct 
@@ -150,9 +188,6 @@ export class HtmlMetaUpdate {
     const { head, body } = update;
     const addhead = newdoc.replace(this['head-match'], head);
     const addbody = addhead.replace(this['body-match'], body);
-
-    // const match = addbody.replace(this['code-match'], `$&${this['copy-button-template']()}`)
-
     return addbody;
   }
 
@@ -161,18 +196,17 @@ export class HtmlMetaUpdate {
    */
   #generateHtmlMeta = () => {
     this.files.forEach(file => {
-      const { name } = path.parse(file);
-      const { title, ...rest } = this['meta-data'][name].meta;
-      const filepath = path.join(this.buildpath, file);
+      const filekey = this.getFilekey(file, this.buildpath)
+      const { title, ...rest } = this['meta-data'][filekey].meta;
       const meta = this['generate-html-meta'](rest).join('\n');
-      const body = readFileSync(filepath).toString();
+      const body = readFileSync(file).toString();
       const dataUpdate = {
         head: `${meta}\n<title>${title}</title>`,
         body
       }
       const newdoc = this.template;
       const finaledoc = this.#updateDoc(newdoc, dataUpdate);
-      writeFileSync(filepath, finaledoc, 'utf-8');
+      writeFileSync(file, finaledoc, 'utf-8');
     });
   }
 
@@ -202,14 +236,4 @@ export class HtmlMetaUpdate {
    * @returns HTML template string
    */
   'meta-line-template' = (name, content) => `<meta name=${name} content=${content}/>`
-
-  /**
-   * Creates a copy icon within an html code block statement
-   * @returns Part of html code block with icon
-   */
-  'copy-button-template' = () => `
-  <button class="copy-btn">
-    <i class="fa-regular fa-copy"></i>
-  </button>
-  `;
 }

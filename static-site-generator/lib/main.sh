@@ -4,15 +4,14 @@
 # Created on ubuntu 22.04
 
 # Check if a dir has been passed
-if [ "$#" -eq 0 ]; then
-    echo -e "You must provide a dir name containing markdown :)"
-    exit 1
-fi
 
-# Check if dir is valid directory
-if [ ! -d $1 ]; then
-    echo -e "$1 is not a directory"
-    echo -e "Stopping program..."
+if [ "$#" -eq 0 ]; then
+    echo -e "You must provide a either of the following to continue"
+    echo -e "   - dir name containing markdown"
+    echo -e "   - markdown file name"
+    echo -e "   - Pass markdown as an inline string"
+    echo -e
+    echo -e "Syntax: staticgen dirname | filename | string"
     exit 1
 fi
 
@@ -24,7 +23,6 @@ source ./support_files
 REQUIRED_PROGRAMS=("node")
 REQUIRED_MODULES=("sass" "showdown")
 BUILDDIR="build"
-INDIR="$1"
 TMPDIR=".tmp"
 WORK_MD="${TMPDIR}/md"
 RUNDIR="${TMPDIR}/run"
@@ -39,6 +37,23 @@ ASSETS="htmltemplates/assets"
 SCRIPTS="htmltemplates/scripts"
 LOGFILE="/var/log/staticgen/staticgen.log"
 ERRORFILE="/var/log/staticgen/staticgen.error"
+
+# Handle input provided to generate a site
+if [ -d "$1" ]; then
+    INDIR="$1"
+elif [ -f "$1" ]; then
+    handle_input_is_file $1
+else
+    handle_input_is_string $1
+fi
+
+# Start logfiles with date
+start_logs() {
+    local loginit="Starting logs for staticgen by Osala: $(date)"
+    local errorinit="Starting error logs for staticgen by Osala: $(date)"
+    echo -e "$loginit" >"$LOGFILE"
+    echo -e "$errorinit" >"$ERRORFILE"
+}
 
 # Check if markdown dir is empty
 check_markdown_dir() {
@@ -61,13 +76,17 @@ create_setup_data() {
     fi
     cp -r "$INDIR" "$WORK_MD"
 
-    # Copy js modules and files to run
-    cp -r js "$RUNDIR/"
-    cp *.mjs "$RUNDIR/"
-
     # Create all build paths
     create_all_build_paths "$INDIR" "$BUILDDIR"
 
+    # Copy js modules and files to run
+    cp -r js "$RUNDIR/"
+    cp *.mjs "$RUNDIR/"
+}
+
+run_update_static_files() {
+    # Copy static files
+    cp htmltemplates/error.html "${BUILDDIR}/error.html"
     # Copy assets to build dir
     cp -r "$ASSETS" "$BUILDDIR/"
     cp -r "$SCRIPTS" "$BUILDDIR/"
@@ -88,7 +107,7 @@ run_setup_nodejs() {
     print_line "Running nodejs setup"
     for module in "${REQUIRED_MODULES[@]}"; do
         print_line "Locating module $module"
-        node_js_setup "$module" >"$LOGFILE" 2>"$ERRORFILE" &
+        node_js_setup "$module" >>"$LOGFILE" 2>>"$ERRORFILE" &
         bash_wait $! "Please wait"
     done
 }
@@ -130,3 +149,21 @@ run_cleanup() {
     Cleanup "$TMPDIR" &
     bash_wait $! "Running cleanup" "Success"
 }
+
+# Single page markdown to site setup
+
+single_page_site() {
+    check_markdown_dir
+    create_setup_data
+    run_check_programs
+    run_setup_nodejs
+    run_extract_metadata
+    run_convert_to_html
+    run_updata_html_meta_data
+    run_generate_css
+    run_update_static_files
+    run_cleanup
+}
+
+start_logs
+single_page_site

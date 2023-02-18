@@ -46,7 +46,7 @@ get_filename() {
 	filename="${temp##*/}"
 }
 
-get_filepath () {
+get_filepath() {
 	local indir="$2"
 	local outdir="$3"
 	local temp="${1%/*}"
@@ -104,7 +104,7 @@ print_line() {
 
 # Remove metadata from files
 remove_meta() {
-	for filename in $( find "$1"/* -type f ); do
+	for filename in $(find "$1"/* -type f); do
 		sed -i '/---/,/---/d' "$filename"
 	done
 }
@@ -123,3 +123,18 @@ create_all_build_paths() {
 		mkdir -p "$filepath"
 	done
 }
+
+handle_input_is_file() {
+	echo -e "File provided as an input, proceeding to generate a single page site"
+	INDIR=".tmp/tempin"
+	mkdir -p "$INDIR"
+	cp "$1" "$INDIR"
+}
+
+handle_input_is_string() {
+	echo -e "String provided as an input, proceeding to generate a single page site"
+	INDIR=".tmp/tempin"
+	mkdir -p "$INDIR"
+	echo -e $1 >"$INDIR"/index.md
+}
+

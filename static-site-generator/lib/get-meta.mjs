@@ -1,4 +1,4 @@
-#! shebang
+#!/bin/node
 
 /**
  * Get meta-data from markdown files

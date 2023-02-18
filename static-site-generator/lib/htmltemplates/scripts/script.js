@@ -34,3 +34,13 @@ blocks.forEach(block => {
   block.appendChild(copyIcon);
   copyIcon.addEventListener('click', async () => await copyCode(block, copyIcon));
 });
+
+window.onerror = (message, source) => {
+  const errorpage = document.getElementById('error-page')
+  errorpage.innerText = 
+  `
+    message: ${message}
+    source: ${source}
+  `
+  window.location = `/error#${error.name}`
+}
