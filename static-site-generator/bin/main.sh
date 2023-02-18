@@ -174,7 +174,7 @@ single_page_site() {
     run_cleanup
 }
 
-run_serve () {
+run_serve() {
     print_line "Preparing to serve $1"
     node_js_setup "serve" >>"$LOGFILE" 2>>"$ERRORFILE" &
     bash_wait $! "Please wait"
@@ -183,7 +183,12 @@ run_serve () {
 
 case $1 in
 "--version") echo -e "$VERSION" && exit 0 ;;
-"--serve") run_serve "$2" && exit 0;;
+"--serve") run_serve "$2" && exit 0 ;;
+"--install-modules")
+    run_check_programs
+    run_setup_nodejs
+    exit 0
+    ;;
 *) ;;
 esac
 
