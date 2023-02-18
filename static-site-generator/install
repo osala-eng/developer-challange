@@ -1,0 +1,30 @@
+#!/bin/bash
+# Installs staticgen - Static site generator from markdown
+# Author Jashon Osala 2023
+# github https://github.com/osala-eng
+
+if [ $(id -u) -ne 0 ]; then
+    echo -e "You must be root to install staticgen"
+    echo -e "Try: sudo ./install"
+    exit 1
+fi
+
+source lib/supportfiles
+echo -e "Installing staticgen please wait"
+
+INSTALLPATH="/opt/staticgen"
+BINPATH="/bin/staticgen"
+LOGPATH="/var/log/staticgen"
+STATICGENTOOL="/opt/staticgen/lib/main.sh"
+JSTOOLSPATH="$INSTALLPATH/lib"
+
+
+# Create required directories if not available
+mkdir -p "$INSTALLPATH" "$LOGPATH"
+
+print_line "Installing files"
+cp -r lib "$INSTALLPATH"/
+ln -s "$BINPATH" "$STATICGENTOOL"
+
+
+

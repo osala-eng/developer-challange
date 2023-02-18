@@ -37,6 +37,7 @@ ASSETS="htmltemplates/assets"
 SCRIPTS="htmltemplates/scripts"
 LOGFILE="/var/log/staticgen/staticgen.log"
 ERRORFILE="/var/log/staticgen/staticgen.error"
+HTMLINDEX="htmltemplates/homepage.html"
 
 # Handle input provided to generate a site
 if [ -d "$1" ]; then
@@ -133,7 +134,7 @@ run_convert_to_html() {
 # Update html files using template
 run_updata_html_meta_data() {
     print_line "Updating html files"
-    "$JSHTMLTOOL" "$METAJSON" "$BUILDDIR" "$HTMLMASTER" >>"$LOGFILE" 2>>"$ERRORFILE" &
+    "$JSHTMLTOOL" "$METAJSON" "$BUILDDIR" "$HTMLMASTER" "$HTMLINDEX" >>"$LOGFILE" 2>>"$ERRORFILE" &
     bash_wait $! "Please wait"
 }
 

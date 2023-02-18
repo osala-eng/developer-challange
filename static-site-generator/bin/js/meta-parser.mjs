@@ -6,7 +6,7 @@
  * github: https://github.com/osala-eng
  */
 
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
+import { readdirSync, readFileSync, statSync, writeFileSync, renameSync } from 'fs';
 import path from 'path';
 
 
@@ -141,6 +141,8 @@ export class HtmlMetaUpdate extends FsTools {
   'head-match' = /{{*.head-data.*}}/i;
   'body-match' = /{{*.body-data.*}}/i;
   'code-match' = /<pre>/gmi;
+  'article-match' = /{{*.articles.*}}/i;
+  'navigation-match' = /{{*.navigation.*}}/i;
 
   /**
    * Class constructor requires passing an array of paths for build
@@ -150,12 +152,14 @@ export class HtmlMetaUpdate extends FsTools {
    * html template
    */
   constructor(
-    [jsonpath, buildpath, template] = process.argv.slice(2)
+    [jsonpath, buildpath, template, homepage] = process.argv.slice(2)
   ) {
     super();
     this.jsonpath = jsonpath;
     this.buildpath = buildpath;
     this.template = readFileSync(template).toString();
+    this.homepage = readFileSync(homepage).toString();
+    this.indexfile = homepage
     this.#updateFiles();
   }
 
@@ -210,13 +214,55 @@ export class HtmlMetaUpdate extends FsTools {
     });
   }
 
+  #updateHomepageArticles = () => {
+    const article = this.files.map(file => {
+      const filekey = this.getFilekey(file, this.buildpath);
+      const dataDef = this['meta-data'][filekey]['meta'];
+
+      if (dataDef['category'] && dataDef['category'] === 'article') {
+        const filepath = dataDef.path;
+        const body = readFileSync(file).toString()
+        return this['article-template'](body, filepath)
+      } else {
+        return ''
+      }
+    }).join('\n')
+    this.homepage = this.homepage.replace(this['article-match'], article)
+    this.homepage = this.homepage.replace(this['head-match'], '<title>Homepage</title>')
+  }
+
+  #updateHomepageNav = () => {
+    const navigation = this.files.map(file => {
+      const filekey = this.getFilekey(file, this.buildpath);
+      const dataDef = this['meta-data'][filekey]['meta'];
+      const nav = this['navigation-template'](dataDef.title, dataDef.path)
+      return nav
+    }).join('')
+    const data = this.homepage.replace(this['navigation-match'], navigation)
+    writeFileSync(this.buildpath + '/homepage.html', data, 'utf-8')
+  }
+
+  #updateFilePaths() {
+    this.files.forEach(file => {
+      const filekey = this.getFilekey(file, this.buildpath);
+      const dataDef = this['meta-data'][filekey]['meta'];
+      if (dataDef.path !== filekey + '.html') {
+        const pathUpdate = `${this.buildpath}/${dataDef.path}`
+        renameSync(file, pathUpdate)
+      }
+    })
+  }
+
   /**
    * Update html files to match the template file syntax
    */
   #updateFiles = () => {
     this.#updateMeta();
     this.#getHtmlFiles();
+    this.#updateHomepageArticles();
+    this.#updateHomepageNav();
     this.#generateHtmlMeta();
+    this.#updateFilePaths();
   }
 
   /**
@@ -236,4 +282,28 @@ export class HtmlMetaUpdate extends FsTools {
    * @returns HTML template string
    */
   'meta-line-template' = (name, content) => `<meta name=${name} content=${content}/>`
+
+  /**
+   * Creates a navigation link to a page
+   * @param {string} title HTML string
+   * @param {string} pathstring Path to page
+   * @returns HTML string
+   */
+  'navigation-template' = (title, pathstring) => `
+    <div class="navigation-option">
+      <a href="/${pathstring}">${title}</a>
+    </div>
+  `
+
+  /**
+   * Creates an aticle for homepage
+   * @param {string} article HTML string 
+   * @param {string} pathstring path to article
+   * @returns HTML string
+   */
+  'article-template' = (article, pathstring) => `
+    <div class="article-option" >
+      ${article}
+    </div>
+  `
 }

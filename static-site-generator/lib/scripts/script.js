@@ -1,4 +1,6 @@
-const goHome = () => window.location = '/';
+const goHome = () => {
+  window.location = '/';
+}
 const showMenu = (data) => console.log(data);
 
 

@@ -126,3 +126,26 @@ ul {
 .fa-file-check {
     color: green;
 }
+
+#home-root-element-div {
+    display: flex;
+    flex-direction: row;
+    margin-top: 5rem;
+    min-height: 100%;
+    #home-nav {
+        flex: 1;
+    }
+    #home-articles {
+        flex: 4;
+    }
+    .navigation-option {
+        display: grid;
+        height: 2rem;
+        padding: 8px;
+        font-size: large;
+        background-color: $--dodger-blue;
+        color: white;
+        border-bottom: 1px solid white;
+        align-items: center;
+    }
+}

@@ -9,7 +9,7 @@
 import { HtmlMetaUpdate } from './js/meta-parser.mjs';
 import path from 'path';
 
-if (process.argv.length < 5) {
+if (process.argv.length < 6) {
   console.log(`Usage ${path.parse(process.argv[1].name).mjs} 
     jsonpath buildpath template`)
   process.exit(1)
