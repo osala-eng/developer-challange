@@ -89,7 +89,7 @@ a {
 }
 
 ul {
-    margin: .5rem 1rem .5rem 3rem;
+    margin: 0.5rem 1rem 0.5rem 3rem;
 }
 
 .copy-btn {
@@ -140,12 +140,16 @@ ul {
     }
     .navigation-option {
         display: grid;
-        height: 2rem;
-        padding: 8px;
-        font-size: large;
-        background-color: $--dodger-blue;
-        color: white;
-        border-bottom: 1px solid white;
         align-items: center;
+        margin-left: 1rem;
+
+        a {
+            height: 2rem;
+            padding: 8px;
+            font-size: large;
+            background-color: $--dodger-blue;
+            color: white;
+            border-bottom: 1px solid white;
+        }
     }
 }

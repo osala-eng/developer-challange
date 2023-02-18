@@ -42,18 +42,24 @@ ASSETS="${LIBPATH}/assets"
 SCRIPTS="${LIBPATH}/scripts"
 LOGFILE="/var/log/staticgen/staticgen.log"
 ERRORFILE="/var/log/staticgen/staticgen.error"
-HTMLINDEX="${LIBPATH}htmltemplates/homepage.html"
-ROOTINDEX="${LIBPATH}htmltemplates/index.html"
-HTML404="${LIBPATH}htmltemplates/404.html"
+HTMLINDEX="${LIBPATH}/htmltemplates/homepage.html"
+ROOTINDEX="${LIBPATH}/htmltemplates/index.html"
+HTML404="${LIBPATH}/htmltemplates/404.html"
 
 # Handle input provided to generate a site
-# if [ -d "$1" ]; then
-#     INDIR="$1"
-# elif [ -f "$1" ]; then
-#     handle_input_is_file $1
-# else
-#     handle_input_is_string $1
-# fi
+run_get_build_and_md() {
+    if [ -d "$1" ]; then
+        INDIR="$1"
+        if [ -z "$2" ]; then
+            BUILDDIR="build"
+        else
+            BUILDDIR="$2"
+        fi
+    else
+        echo -e "You must provide a directory containing markdown"
+        exit 1
+    fi
+}
 
 # Start logfiles with date
 start_logs() {
@@ -88,8 +94,8 @@ create_setup_data() {
     create_all_build_paths "$INDIR" "$BUILDDIR"
 
     # Copy js modules and files to run
-    cp -r js "$RUNDIR/"
-    cp *.mjs "$RUNDIR/"
+    cp -r $INPATH/bin/js "$RUNDIR/"
+    cp $INPATH/bin/*.mjs "$RUNDIR/"
 }
 
 run_update_static_files() {
@@ -162,6 +168,7 @@ run_cleanup() {
 # Single page markdown to site setup
 
 single_page_site() {
+    run_get_build_and_md "${1%/}" "${2%/}"
     check_markdown_dir
     create_setup_data
     run_check_programs
@@ -193,4 +200,4 @@ case $1 in
 esac
 
 start_logs
-single_page_site
+single_page_site "$1" "$2"
