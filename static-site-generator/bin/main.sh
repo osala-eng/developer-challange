@@ -15,7 +15,7 @@ if [ "$#" -eq 0 ]; then
     exit 1
 fi
 
-INPATH="/home/ubuntu/personalprojects/developer-challange/static-site-generator"
+INPATH="/opt/staticgen"
 
 # Import functions
 source $INPATH/bin/bash_tools
@@ -34,7 +34,7 @@ JSMETATOOL="${RUNDIR}/get-meta.mjs"
 JSHTMLTOOL="${RUNDIR}/update-html.mjs"
 JSLIB="$RUNDIR/js"
 METAJSON="$TMPDIR/meta.json"
-LIBPATH="../lib"
+LIBPATH="/opt/staticgen/lib"
 HTMLMASTER="${LIBPATH}/htmltemplates/master.html"
 SASSY_IN="${LIBPATH}/styles/main.scss"
 SASSY_OUT="$BUILDDIR/main.css"

@@ -9,17 +9,17 @@ if [ $(id -u) -ne 0 ]; then
     exit 1
 fi
 
-source lib/supportfiles
+source bin/supportfiles
 echo -e "Installing staticgen please wait"
 
 INSTALLPATH="/opt/staticgen"
 BINPATH="/bin/staticgen"
 LOGPATH="/var/log/staticgen"
 STATICGENTOOL="/opt/staticgen/bin/main.sh"
-USER=""
-
 
 # Create required directories if not available
+rm -rf "$INSTALLPATH"
+
 mkdir -p "$INSTALLPATH" "$LOGPATH"
 
 print_line "Installing files"
@@ -29,6 +29,6 @@ cp -r bin "$INSTALLPATH"/
 chown -hR "$USER":"$USER" $INSTALLPATH
 
 chmod u+x $INSTALLPATH/bin/*
+chmod u+x "$INSTALLPATH/bin/js"
 
 ln -s -f "$BINPATH" "$STATICGENTOOL"
-
