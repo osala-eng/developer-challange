@@ -2,7 +2,8 @@
 title: staticgen
 description: A simple static site generator
 category: sigle-page
-path: staticgen.html 
+path: staticgen.html
+author: Jashon Osala
 ---
 
 # Static-site generator
