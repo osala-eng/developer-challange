@@ -15,38 +15,45 @@ if [ "$#" -eq 0 ]; then
     exit 1
 fi
 
+INPATH="/home/ubuntu/personalprojects/developer-challange/static-site-generator"
+
 # Import functions
-source ./bash_tools
-source ./support_files
+source $INPATH/bin/bash_tools
+source $INPATH/bin/support_files
+
+VERSION="1.0.0"
 
 # Declare Variables
 REQUIRED_PROGRAMS=("node")
 REQUIRED_MODULES=("sass" "showdown")
 BUILDDIR="build"
-TMPDIR=".tmp"
+TMPDIR="/tmp/staticgen"
 WORK_MD="${TMPDIR}/md"
 RUNDIR="${TMPDIR}/run"
 JSMETATOOL="${RUNDIR}/get-meta.mjs"
 JSHTMLTOOL="${RUNDIR}/update-html.mjs"
 JSLIB="$RUNDIR/js"
 METAJSON="$TMPDIR/meta.json"
-HTMLMASTER="htmltemplates/master.html"
-SASSY_IN="htmltemplates/styles/main.scss"
+LIBPATH="../lib"
+HTMLMASTER="${LIBPATH}/htmltemplates/master.html"
+SASSY_IN="${LIBPATH}/styles/main.scss"
 SASSY_OUT="$BUILDDIR/main.css"
-ASSETS="htmltemplates/assets"
-SCRIPTS="htmltemplates/scripts"
+ASSETS="${LIBPATH}/assets"
+SCRIPTS="${LIBPATH}/scripts"
 LOGFILE="/var/log/staticgen/staticgen.log"
 ERRORFILE="/var/log/staticgen/staticgen.error"
-HTMLINDEX="htmltemplates/homepage.html"
+HTMLINDEX="${LIBPATH}htmltemplates/homepage.html"
+ROOTINDEX="${LIBPATH}htmltemplates/index.html"
+HTML404="${LIBPATH}htmltemplates/404.html"
 
 # Handle input provided to generate a site
-if [ -d "$1" ]; then
-    INDIR="$1"
-elif [ -f "$1" ]; then
-    handle_input_is_file $1
-else
-    handle_input_is_string $1
-fi
+# if [ -d "$1" ]; then
+#     INDIR="$1"
+# elif [ -f "$1" ]; then
+#     handle_input_is_file $1
+# else
+#     handle_input_is_string $1
+# fi
 
 # Start logfiles with date
 start_logs() {
@@ -87,8 +94,8 @@ create_setup_data() {
 
 run_update_static_files() {
     # Copy static files
-    cp htmltemplates/404.html "${BUILDDIR}/404.html"
-    cp htmltemplates/index.html "${BUILDDIR}/index.html"
+    cp "$HTML404" "${BUILDDIR}/404.html"
+    cp "$ROOTINDEX" "${BUILDDIR}/index.html"
     # Copy assets to build dir
     cp -r "$ASSETS" "$BUILDDIR/"
     cp -r "$SCRIPTS" "$BUILDDIR/"
@@ -166,6 +173,19 @@ single_page_site() {
     run_update_static_files
     run_cleanup
 }
+
+run_serve () {
+    print_line "Preparing to serve $1"
+    node_js_setup "serve" >>"$LOGFILE" 2>>"$ERRORFILE" &
+    bash_wait $! "Please wait"
+    npx serve $1
+}
+
+case $1 in
+"--version") echo -e "$VERSION" && exit 0 ;;
+"--serve") run_serve "$2" && exit 0;;
+*) ;;
+esac
 
 start_logs
 single_page_site

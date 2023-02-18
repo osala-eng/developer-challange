@@ -15,8 +15,8 @@ echo -e "Installing staticgen please wait"
 INSTALLPATH="/opt/staticgen"
 BINPATH="/bin/staticgen"
 LOGPATH="/var/log/staticgen"
-STATICGENTOOL="/opt/staticgen/lib/main.sh"
-JSTOOLSPATH="$INSTALLPATH/lib"
+STATICGENTOOL="/opt/staticgen/bin/main.sh"
+USER=""
 
 
 # Create required directories if not available
@@ -24,7 +24,11 @@ mkdir -p "$INSTALLPATH" "$LOGPATH"
 
 print_line "Installing files"
 cp -r lib "$INSTALLPATH"/
-ln -s "$BINPATH" "$STATICGENTOOL"
+cp -r bin "$INSTALLPATH"/
 
+chown -hR "$USER":"$USER" $INSTALLPATH
 
+chmod u+x $INSTALLPATH/bin/*
+
+ln -s -f "$BINPATH" "$STATICGENTOOL"
 

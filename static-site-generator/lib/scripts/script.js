@@ -2,8 +2,6 @@ const goHome = () => {
   window.location = '/';
 }
 const showMenu = (data) => console.log(data);
-
-
 const blocks = document.querySelectorAll('pre');
 
 /**
