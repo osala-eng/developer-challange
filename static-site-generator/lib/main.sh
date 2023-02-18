@@ -86,7 +86,7 @@ create_setup_data() {
 
 run_update_static_files() {
     # Copy static files
-    cp htmltemplates/error.html "${BUILDDIR}/error.html"
+    cp htmltemplates/404.html "${BUILDDIR}/404.html"
     # Copy assets to build dir
     cp -r "$ASSETS" "$BUILDDIR/"
     cp -r "$SCRIPTS" "$BUILDDIR/"

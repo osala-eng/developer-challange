@@ -35,12 +35,21 @@ blocks.forEach(block => {
   copyIcon.addEventListener('click', async () => await copyCode(block, copyIcon));
 });
 
-window.onerror = (message, source) => {
-  const errorpage = document.getElementById('error-page')
-  errorpage.innerText = 
+const ReturnBack = () => history.back()
+
+const ErrorDiv = document.getElementById('error-page');
+const onError = () => {
+  const errorNode = document.createElement('div');
+  errorNode.innerHTML = `
+  <h3>OOPS AN ERROR OCCURED</h3>
+  <p>
+    The following resource could not be found:<br/>
+    <span>${document.URL}</span>
+  </p>
+  <div class="btn-group">
+    <button onclick="history.back()">GO BACK</button>
+    <button onclick="goHome()">Goto HOMEPAGE</button>
+  </div>
   `
-    message: ${message}
-    source: ${source}
-  `
-  window.location = `/error#${error.name}`
+  ErrorDiv.appendChild(errorNode)
 }
