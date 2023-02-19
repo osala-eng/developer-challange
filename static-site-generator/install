@@ -26,7 +26,8 @@ echo -e "Installing files"
 cp -r lib "$INSTALLPATH"/
 cp -r bin "$INSTALLPATH"/
 
-chown -hR "$USER":"$USER" $INSTALLPATH
+chown -hR "$USER":"$USER" "$INSTALLPATH"
+chown -hR "$USER":"$USER" "$LOGPATH"
 
 chmod a+x $INSTALLPATH/bin/*
 chmod a+x "$INSTALLPATH/bin/js"/*

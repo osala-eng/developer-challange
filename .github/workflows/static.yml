@@ -35,7 +35,7 @@ jobs:
           mkdir -p markdown/static-site-generator
           cp README.md markdown/developer-challenge.md
           cp static-site-generator/README.md markdown/static-site-generator/static-site-generator.md
-          staticgen markdown
+          staticgen markdown _site
       - name: Upload build
         uses: actions/upload-pages-artifact@v1
 
