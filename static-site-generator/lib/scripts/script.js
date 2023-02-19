@@ -53,3 +53,15 @@ const onError = () => {
   `
   ErrorDiv.appendChild(errorNode)
 }
+
+const setupPage = () => {
+  const body = document.querySelector('body')
+  const footer = document.querySelector('footer')
+  if (body.offsetHeight < window.innerHeight) {
+    footer.style.position = 'absolute'
+    footer.style.bottom = '0'
+    footer.style.width = '100%'
+  } else {
+    footer.style.position = 'static'
+  }
+}

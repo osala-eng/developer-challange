@@ -3,6 +3,7 @@ $--accent-color: rgb(12, 128, 118);
 $--dodger-blue: DodgerBlue;
 $--border-color: #e7f2ea;
 $--highlight: rgb(39, 80, 100);
+$--nav-accent: #e7f2ea;
 
 @mixin code-highlight-color {
     color: white;
@@ -134,6 +135,17 @@ ul {
     min-height: 100%;
     #home-nav {
         flex: 1;
+        padding: 0;
+        background-color: $--nav-accent;
+
+        #nav-title {
+            width: 100%;
+            background-color: $--accent-color;
+            text-align: center;
+            font-size: 2rem;
+            color: white;
+            border-bottom: .5px solid white;
+        }
     }
     #home-articles {
         flex: 4;
@@ -141,12 +153,11 @@ ul {
     .navigation-option {
         display: grid;
         align-items: center;
-        margin-left: 1rem;
 
         a {
-            height: 1.5rem;
-            padding: 8px;
-            font-size: large;
+            padding: 4px 8px;
+            margin: 0 1rem;
+            font-size: 1.2rem;
             background-color: $--dodger-blue;
             color: white;
             border-bottom: 1px solid white;
