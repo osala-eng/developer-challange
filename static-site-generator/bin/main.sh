@@ -208,8 +208,7 @@ case $1 in
     ROOTINDEX="${LIBPATH}/${SELECT_TEMPLATE}/index.html"
     HTML404="${LIBPATH}/${SELECT_TEMPLATE}/404.html"
 
-    get_filename "$4"
-    ABSOLUTE_PATH="/${filename}"
+    ABSOLUTE_PATH="$4"
     export BASE_URL=${ABSOLUTE_PATH}
     export USE_GITHUB="TRUE"
 
@@ -220,7 +219,7 @@ case $1 in
     # Update base URL
     sed -i "s|{{*.git-hub-root-url.*}}|$ABSOLUTE_PATH|g" "${BUILDDIR}/index.html"
     sed -i "s|{{*.git-hub-root-url.*}}|$ABSOLUTE_PATH|g" "${BUILDDIR}/404.html"
-    sed -i "s|/homepage.html|$ABSOLUTE_PATH/|g" "${BUILDDIR}/scripts/script.js"
+    sed -i "s|/homepage.html|$ABSOLUTE_PATH/homepage.html|g" "${BUILDDIR}/scripts/script.js"
 
     # Clear env config and exit
     exit 0

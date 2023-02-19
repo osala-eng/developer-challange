@@ -24,9 +24,6 @@ jobs:
   # Single deploy job since we're just deploying
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: staticgen
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,8 +37,7 @@ jobs:
           cp static-site-generator/README.md markdown/static-site-generator.md
           sudo staticgen --deploy-to-github markdown build "$GIT_HOST_URL"
         env:
-          GIT_HOST_URL: "https://osala-eng.github.io/developer-challange"
-          USE_GITHUB: "TRUE"
+          GIT_HOST_URL: "//developer-challange"
 
       - name: Upload build using upload page artifacts
         uses: actions/upload-pages-artifact@v1
