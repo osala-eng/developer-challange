@@ -213,8 +213,13 @@ case $1 in
     # Start build
     start_logs
     single_page_site "$2" "$3"
+
+    # Update base URL
     sed -i "s|{{*.git-hub-root-url.*}}|$BASE_URL|g" "${BUILDDIR}/index.html"
     sed -i "s|{{*.git-hub-root-url.*}}|$BASE_URL|g" "${BUILDDIR}/404.html"
+    sed -i "s|/homepage.html|$BASE_URL|g" "${BUILDDIR}/scripts/script.js"
+
+    # Clear env config and exit
     unset USE_GITHUB
     unset BASE_URL
     exit 0
