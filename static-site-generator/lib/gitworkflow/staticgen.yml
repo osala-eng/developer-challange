@@ -1,0 +1,51 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Build and deploy using staticgen
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["{{branch-name}}"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create markdown
+        run: |
+          mkdir -p /tmp/markdown
+          cp README.md /tmp/markdown/streams.md
+      - name: Create static site build
+        uses: osala-eng/staticgen@v1
+        with:
+          md: "/tmp/markdown"
+          url: "{base-url}"
+  
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: staticgen
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    steps:
+      - name: Deploy static site to git pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+        with:
+          artifact_name: staticgen
