@@ -42,7 +42,7 @@ jobs:
           echo -e "$GIT_HOST_URL"
           echo -e "$USE_GITHUB"
         env:
-          GIT_HOST_URL: ${{ environment.url }}
+          GIT_HOST_URL: "https://osala-eng.github.io/developer-challange"
           USE_GITHUB: "TRUE"
 
       - name: Upload build using upload page artifacts
