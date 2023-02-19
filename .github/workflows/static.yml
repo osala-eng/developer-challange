@@ -37,7 +37,7 @@ jobs:
           cp static-site-generator/README.md markdown/static-site-generator.md
           sudo staticgen --deploy-to-github markdown build "$GIT_HOST_URL"
         env:
-          GIT_HOST_URL: "//developer-challange"
+          GIT_HOST_URL: "/developer-challange"
 
       - name: Upload build using upload page artifacts
         uses: actions/upload-pages-artifact@v1
