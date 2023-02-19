@@ -2,7 +2,7 @@
 title: Static website generator
 description: A simple static site generator
 category: article
-path: developer-challange/staticgen.html
+path: static-site-generator/staticgen.html
 author: Jashon Osala
 ---
 
