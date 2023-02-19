@@ -26,9 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
       - name: create-build
-      - run: |
+        run: |
           sudo static-site-generator/install
           mkdir -p markdown/static-site-generator
           cp README.md markdown/developer-challenge.md
@@ -36,7 +36,7 @@ jobs:
           staticgen markdown
       - name: Upload build
         uses: actions/upload-pages-artifact@v1
-  
+
   deploy:
     environment:
       name: staticgen
@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload build
-          path: 'build'
+          path: "build"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
