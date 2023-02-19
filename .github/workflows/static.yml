@@ -35,6 +35,8 @@ jobs:
           mkdir -p markdown/static-site-generator
           cp README.md markdown/developer-challenge.md
           cp static-site-generator/README.md markdown/static-site-generator/static-site-generator.md
+          echo -e "Test uri1: ${{ steps.deployment.outputs.page_url }}"
+          echo -e "Testing uri 2: $url"
           sudo rm -rf build
           sudo staticgen --deploy-to-github markdown build "http://resume.jsoan.com/developer-challange"
       - name: Upload build using upload page artifacts
