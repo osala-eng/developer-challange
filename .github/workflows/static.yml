@@ -36,7 +36,7 @@ jobs:
           cp README.md markdown/developer-challenge.md
           cp static-site-generator/README.md markdown/static-site-generator/static-site-generator.md
           sudo rm -rf build
-          sudo staticgen --deploy-to-github markdown build ${{ steps.deployment.outputs.page_url }}
+          sudo staticgen --deploy-to-github markdown build "http://resume.jsoan.com/developer-challange"
       - name: Upload build using upload page artifacts
         uses: actions/upload-pages-artifact@v1
         with:
