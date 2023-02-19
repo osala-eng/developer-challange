@@ -24,6 +24,9 @@ jobs:
   # Single deploy job since we're just deploying
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: staticgen
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -36,10 +39,10 @@ jobs:
           cp README.md markdown/developer-challenge.md
           cp static-site-generator/README.md markdown/static-site-generator.md
           sudo staticgen --deploy-to-github markdown build
-          echo -e "$BASE_URL"
+          echo -e "$GIT_HOST_URL"
           echo -e "$USE_GITHUB"
         env:
-          BASE_URL: ${{ steps.deployment.outputs.page_url }}
+          GIT_HOST_URL: ${{ environment.url }}
           USE_GITHUB: "TRUE"
 
       - name: Upload build using upload page artifacts
