@@ -304,9 +304,8 @@ export class HtmlMetaUpdate extends FsTools {
    */
   'navigation-template' = (title, pathstring) => {
     if (GIT === 'TRUE') {
-      const address = URL + '/' + pathstring
       return `<div class="navigation-option">
-          <a href="/${address}">${title}</a>
+          <a href="${URL}/${pathstring}">${title}</a>
         </div>`
     }
     return `<div class="navigation-option">
