@@ -209,7 +209,7 @@ case $1 in
     HTML404="${LIBPATH}/${SELECT_TEMPLATE}/404.html"
 
     get_filename "$4"
-    local ABSOLUTE_PATH="/${filename}"
+    ABSOLUTE_PATH="/${filename}"
     export BASE_URL=${ABSOLUTE_PATH}
     export USE_GITHUB="TRUE"
 
