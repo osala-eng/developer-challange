@@ -1,3 +1,11 @@
+---
+title: Pesapal Junior developer challenge
+description: Pesapal junior developer challenge
+category: article
+path: developer-challange.html
+author: Jashon Osala
+---
+
 # Developer challange
 
 ### Project 1 - Static site generator

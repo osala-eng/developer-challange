@@ -1,8 +1,8 @@
 ---
-title: staticgen
+title: Static website generator
 description: A simple static site generator
-category: sigle-page
-path: staticgen.html
+category: article
+path: developer-challange/staticgen.html
 author: Jashon Osala
 ---
 
