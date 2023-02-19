@@ -6,4 +6,21 @@
       max-width: 100%;
     }
   }
+
+  #home-root-element-div {
+    display: flex;
+    #home-nav {
+      position: absolute;
+      display: none;
+    }
+    #home-articles {
+      flex: 1;
+
+      .articles-class{
+        padding: 0 1rem;
+        width: 100%;
+        margin: 0 auto;
+      }
+    }
+  }
 }
