@@ -208,9 +208,10 @@ case $1 in
     ROOTINDEX="${LIBPATH}/${SELECT_TEMPLATE}/index.html"
     HTML404="${LIBPATH}/${SELECT_TEMPLATE}/404.html"
 
-    get_filename "$GIT_HOST_URL"
+    get_filename "$4"
     local ABSOLUTE_PATH="/${filename}"
     export BASE_URL=${ABSOLUTE_PATH}
+    export USE_GITHUB="TRUE"
 
     # Start build
     start_logs
