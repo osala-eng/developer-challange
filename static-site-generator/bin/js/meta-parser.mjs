@@ -213,7 +213,7 @@ export class HtmlMetaUpdate extends FsTools {
       }
       const newdoc = this.template;
       const finaledoc = this.#updateDoc(newdoc, dataUpdate);
-      if (GIT === 'TRUE'){
+      if (GIT === 'TRUE') {
         const doc = finaledoc.replace(this['git-match'], URL);
         writeFileSync(file, doc, 'utf-8');
       } else {
@@ -247,7 +247,7 @@ export class HtmlMetaUpdate extends FsTools {
       return nav
     }).join('')
     const data = this.homepage.replace(this['navigation-match'], navigation)
-    if (GIT === 'TRUE'){
+    if (GIT === 'TRUE') {
       const doc = data.replace(this['git-match'], URL);
       writeFileSync(this.buildpath + '/homepage.html', doc, 'utf-8');
     } else {
@@ -255,7 +255,7 @@ export class HtmlMetaUpdate extends FsTools {
     }
   }
 
-  #updateFilePaths() {
+  #updateFilePaths = () => {
     this.files.forEach(file => {
       const filekey = this.getFilekey(file, this.buildpath);
       const dataDef = this['meta-data'][filekey]['meta'];
