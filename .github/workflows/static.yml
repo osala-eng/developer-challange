@@ -38,9 +38,7 @@ jobs:
           mkdir -p markdown
           cp README.md markdown/developer-challenge.md
           cp static-site-generator/README.md markdown/static-site-generator.md
-          sudo staticgen --deploy-to-github markdown build
-          echo -e "$GIT_HOST_URL"
-          echo -e "$USE_GITHUB"
+          sudo staticgen --deploy-to-github markdown build "$GIT_HOST_URL"
         env:
           GIT_HOST_URL: "https://osala-eng.github.io/developer-challange"
           USE_GITHUB: "TRUE"
