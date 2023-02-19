@@ -39,7 +39,7 @@ jobs:
       - name: Upload build using upload page artifacts
         uses: actions/upload-pages-artifact@v1
         with:
-          source: build
+          path: build
 
   deploy:
     environment:
