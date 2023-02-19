@@ -32,9 +32,9 @@ jobs:
           cd static-site-generator
           sudo ./install
           cd ..
-          mkdir -p markdown
+          mkdir -p markdown/static-site-generator
           cp README.md markdown/developer-challenge.md
-          cp static-site-generator/README.md markdown/static-site-generator.md
+          cp static-site-generator/README.md markdown/static-site-generator/staticgen.md
           sudo staticgen --deploy-to-github markdown build "$GIT_HOST_URL"
         env:
           GIT_HOST_URL: ""
