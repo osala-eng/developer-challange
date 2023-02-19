@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: create-build
+      - name: Generate a custom build
         run: |
           cd static-site-generator
           sudo ./install
@@ -35,9 +35,11 @@ jobs:
           mkdir -p markdown/static-site-generator
           cp README.md markdown/developer-challenge.md
           cp static-site-generator/README.md markdown/static-site-generator/static-site-generator.md
-          staticgen markdown _site
-      - name: Upload build
+          staticgen markdown
+      - name: Upload build using upload page artifacts
         uses: actions/upload-pages-artifact@v1
+        with:
+          source: build
 
   deploy:
     environment:
