@@ -201,8 +201,6 @@ case $1 in
 "--deploy-to-github")
     # Generating builds for github pages
     print_line "generating custom build for github"
-    export USE_GITHUB="TRUE"
-    export BASE_URL="$4"
     # Select git templates
     SELECT_TEMPLATE="gitpagestemplates"
     HTMLMASTER="${LIBPATH}/${SELECT_TEMPLATE}/master.html"
@@ -210,18 +208,20 @@ case $1 in
     ROOTINDEX="${LIBPATH}/${SELECT_TEMPLATE}/index.html"
     HTML404="${LIBPATH}/${SELECT_TEMPLATE}/404.html"
 
+    get_filename "$GIT_HOST_URL"
+    local ABSOLUTE_PATH="/${filename}"
+    export BASE_URL=${ABSOLUTE_PATH}
+
     # Start build
     start_logs
     single_page_site "$2" "$3"
 
     # Update base URL
-    sed -i "s|{{*.git-hub-root-url.*}}|$BASE_URL|g" "${BUILDDIR}/index.html"
-    sed -i "s|{{*.git-hub-root-url.*}}|$BASE_URL|g" "${BUILDDIR}/404.html"
-    sed -i "s|/homepage.html|$BASE_URL|g" "${BUILDDIR}/scripts/script.js"
+    sed -i "s|{{*.git-hub-root-url.*}}|$ABSOLUTE_PATH|g" "${BUILDDIR}/index.html"
+    sed -i "s|{{*.git-hub-root-url.*}}|$ABSOLUTE_PATH|g" "${BUILDDIR}/404.html"
+    sed -i "s|/homepage.html|$ABSOLUTE_PATH/|g" "${BUILDDIR}/scripts/script.js"
 
     # Clear env config and exit
-    unset USE_GITHUB
-    unset BASE_URL
     exit 0
     ;;
 "--install-modules")
