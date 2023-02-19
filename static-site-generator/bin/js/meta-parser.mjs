@@ -9,6 +9,8 @@
 import { readdirSync, readFileSync, statSync, writeFileSync, renameSync } from 'fs';
 import path from 'path';
 
+const GIT = process.env.USE_GITHUB;
+const URL = process.env.BASE_URL
 
 class FsTools {
   /**
@@ -143,6 +145,7 @@ export class HtmlMetaUpdate extends FsTools {
   'code-match' = /<pre>/gmi;
   'article-match' = /{{*.articles.*}}/i;
   'navigation-match' = /{{*.navigation.*}}/i;
+  'git-match' = /{{*.git-hub-root-url.*}}/gmi;
 
   /**
    * Class constructor requires passing an array of paths for build
@@ -210,7 +213,12 @@ export class HtmlMetaUpdate extends FsTools {
       }
       const newdoc = this.template;
       const finaledoc = this.#updateDoc(newdoc, dataUpdate);
-      writeFileSync(file, finaledoc, 'utf-8');
+      if (GIT === 'TRUE'){
+        const doc = finaledoc.replace(this['git-match'], URL);
+        writeFileSync(file, doc, 'utf-8');
+      } else {
+        writeFileSync(file, finaledoc, 'utf-8');
+      }
     });
   }
 
@@ -239,7 +247,12 @@ export class HtmlMetaUpdate extends FsTools {
       return nav
     }).join('')
     const data = this.homepage.replace(this['navigation-match'], navigation)
-    writeFileSync(this.buildpath + '/homepage.html', data, 'utf-8')
+    if (GIT === 'TRUE'){
+      const doc = data.replace(this['git-match'], URL);
+      writeFileSync(this.buildpath + '/homepage.html', doc, 'utf-8');
+    } else {
+      writeFileSync(this.buildpath + '/homepage.html', data, 'utf-8');
+    }
   }
 
   #updateFilePaths() {

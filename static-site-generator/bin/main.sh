@@ -23,6 +23,7 @@ source $INPATH/bin/support_files
 
 VERSION="1.0.0"
 
+SELECT_TEMPLATE="htmltemplates"
 # Declare Variables
 REQUIRED_PROGRAMS=("node")
 REQUIRED_MODULES=("sass" "showdown")
@@ -35,16 +36,16 @@ JSHTMLTOOL="${RUNDIR}/update-html.mjs"
 JSLIB="$RUNDIR/js"
 METAJSON="$TMPDIR/meta.json"
 LIBPATH="/opt/staticgen/lib"
-HTMLMASTER="${LIBPATH}/htmltemplates/master.html"
+HTMLMASTER="${LIBPATH}/${SELECT_TEMPLATE}/master.html"
 SASSY_IN="${LIBPATH}/styles/main.scss"
 SASSY_OUT="$BUILDDIR/main.css"
 ASSETS="${LIBPATH}/assets"
 SCRIPTS="${LIBPATH}/scripts"
 LOGFILE="/var/log/staticgen/staticgen.log"
 ERRORFILE="/var/log/staticgen/staticgen.error"
-HTMLINDEX="${LIBPATH}/htmltemplates/homepage.html"
-ROOTINDEX="${LIBPATH}/htmltemplates/index.html"
-HTML404="${LIBPATH}/htmltemplates/404.html"
+HTMLINDEX="${LIBPATH}/${SELECT_TEMPLATE}/homepage.html"
+ROOTINDEX="${LIBPATH}/${SELECT_TEMPLATE}/index.html"
+HTML404="${LIBPATH}/${SELECT_TEMPLATE}/404.html"
 
 # Handle input provided to generate a site
 run_get_build_and_md() {
@@ -189,15 +190,42 @@ run_serve() {
 }
 
 case $1 in
-"--version") echo -e "$VERSION" && exit 0 ;;
-"--serve") run_serve "$2" && exit 0 ;;
+"--version")
+    echo -e "$VERSION"
+    exit 0
+    ;;
+"--serve")
+    run_serve "$2"
+    exit 0
+    ;;
+"--deploy-to-github")
+    # Generating builds for github pages
+    print_line "generating custom build for github"
+    export USE_GITHUB="TRUE"
+    export BASE_URL="$4"
+    # Select git templates
+    SELECT_TEMPLATE="gitpagestemplates"
+    HTMLMASTER="${LIBPATH}/${SELECT_TEMPLATE}/master.html"
+    HTMLINDEX="${LIBPATH}/${SELECT_TEMPLATE}/homepage.html"
+    ROOTINDEX="${LIBPATH}/${SELECT_TEMPLATE}/index.html"
+    HTML404="${LIBPATH}/${SELECT_TEMPLATE}/404.html"
+
+    # Start build
+    start_logs
+    single_page_site "$2" "$3"
+    sed -i "s|{{*.git-hub-root-url.*}}|$BASE_URL|g" "${BUILDDIR}/index.html"
+    sed -i "s|{{*.git-hub-root-url.*}}|$BASE_URL|g" "${BUILDDIR}/404.html"
+    unset USE_GITHUB
+    unset BASE_URL
+    exit 0
+    ;;
 "--install-modules")
     run_check_programs
     run_setup_nodejs
     exit 0
     ;;
-*) ;;
+*)
+    start_logs
+    single_page_site "$1" "$2"
+    ;;
 esac
-
-start_logs
-single_page_site "$1" "$2"
