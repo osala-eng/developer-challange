@@ -40,7 +40,7 @@ jobs:
           cp static-site-generator/README.md markdown/static-site-generator.md
           sudo rm -rf build
           echo -e $url
-          sudo staticgen --deploy-to-github markdown build $url
+          sudo staticgen --deploy-to-github markdown build "https://osala-eng.github.io/developer-challange"
       - name: Upload build using upload page artifacts
         uses: actions/upload-pages-artifact@v1
         with:
