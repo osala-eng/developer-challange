@@ -149,3 +149,10 @@ handle_input_is_string() {
 	echo -e $1 >"$INDIR"/index.md
 }
 
+create_git_work_flow () {
+	local workflowlib="/opt/staticgen/lib/gitworkflow/staticgen.yml"
+	local gitworkflowdir="${(git rev-parse --show-toplevel)}/.github/workflows"
+	mkdir -p "$gitworkflowdir"
+	cp "$workflowlib" "$gitworkflowdir/staticgen.yml"
+} 
+
