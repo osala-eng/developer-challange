@@ -179,6 +179,7 @@ single_page_site() {
     run_updata_html_meta_data
     run_generate_css
     run_update_static_files
+    set_project_title "${BUILDDIR}/index.html"
     run_cleanup
 }
 

@@ -7,12 +7,12 @@ UPDATE=0
 showdown="/home/ubuntu/showdown-2.1.0/bin/showdown.js"
 
 # Install nodejs
-install_nodes_js () {
+install_nodes_js() {
 	local address="https://nodejs.org/dist/v18.14.1/node-v18.14.1-linux-x64.tar.xz"
 	wget "$address" -P "/tmp/"
 	tar -xf "/tmp/node-v18.14.1-linux-x64.tar.xz" -C "/opt/"
-	echo -e "#!/usr/bin/bash" > "/etc/profile.d/node.sh"
-	echo -e 'export PATH="/opt/node-v18.14.1-linux-x64/bin:${PATH}"' >> "/etc/profile.d/node.sh"
+	echo -e "#!/usr/bin/bash" >"/etc/profile.d/node.sh"
+	echo -e 'export PATH="/opt/node-v18.14.1-linux-x64/bin:${PATH}"' >>"/etc/profile.d/node.sh"
 	chmod a+x "/etc/profile.d/node.sh"
 	source "/etc/profile.d/node.sh"
 }
@@ -149,10 +149,17 @@ handle_input_is_string() {
 	echo -e $1 >"$INDIR"/index.md
 }
 
-create_git_work_flow () {
+create_git_work_flow() {
 	local workflowlib="/opt/staticgen/lib/gitworkflow/staticgen.yml"
-	local gitworkflowdir="${(git rev-parse --show-toplevel)}/.github/workflows"
+	local gitworkflowdir="$(git rev-parse --show-toplevel)/.github/workflows"
 	mkdir -p "$gitworkflowdir"
 	cp "$workflowlib" "$gitworkflowdir/staticgen.yml"
-} 
+}
 
+set_project_title() {
+	local title="$2"
+	if [ -z "$title" ]; then
+		title="Staticgen"
+	fi
+	sed -i "s/{{ project-title }}/$title/g" $1
+}

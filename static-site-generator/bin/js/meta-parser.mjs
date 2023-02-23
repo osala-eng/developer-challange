@@ -226,14 +226,9 @@ export class HtmlMetaUpdate extends FsTools {
     const article = this.files.map(file => {
       const filekey = this.getFilekey(file, this.buildpath);
       const dataDef = this['meta-data'][filekey]['meta'];
-
-      if (dataDef['category'] && dataDef['category'] === 'article') {
-        const filepath = dataDef.path;
-        const body = readFileSync(file).toString()
-        return this['article-template'](body, filepath)
-      } else {
-        return ''
-      }
+      const filepath = dataDef.path;
+      const body = readFileSync(file).toString()
+      return this['article-template'](body, filepath)
     }).join('\n')
     this.homepage = this.homepage.replace(this['article-match'], article)
     this.homepage = this.homepage.replace(this['head-match'], '<title>Homepage</title>')

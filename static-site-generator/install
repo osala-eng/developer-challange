@@ -29,8 +29,8 @@ cp -r bin "$INSTALLPATH"/
 chown -hR "$SUDO_USER":"$SUDO_USER" "$INSTALLPATH"
 chown -hR "$SUDO_USER":"$SUDO_USER" "$LOGPATH"
 
-chmod a+x $INSTALLPATH/bin/*
-chmod a+x "$INSTALLPATH/bin/js"/*
+find $INSTALLPATH/bin -type f -exec chmod a+x {} ';'
+
 
 ln -s -f "$STATICGENTOOL" "$BINPATH/staticgen"
 
