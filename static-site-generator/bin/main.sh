@@ -180,6 +180,7 @@ single_page_site() {
     run_generate_css
     run_update_static_files
     set_project_title "${BUILDDIR}/index.html"
+    mv "${BUILDDIR}/homepage.html" "${BUILDDIR}/index.html"
     run_cleanup
 }
 
@@ -220,7 +221,7 @@ case $1 in
     # Update base URL
     sed -i "s|{{*.git-hub-root-url.*}}|$ABSOLUTE_PATH|g" "${BUILDDIR}/index.html"
     sed -i "s|{{*.git-hub-root-url.*}}|$ABSOLUTE_PATH|g" "${BUILDDIR}/404.html"
-    sed -i "s|/homepage.html|$ABSOLUTE_PATH/homepage.html|g" "${BUILDDIR}/scripts/script.js"
+    sed -i "s|{{ base-path }}|$ABSOLUTE_PATH|g" "${BUILDDIR}/scripts/script.js"
 
     # Clear env config and exit
     exit 0
@@ -233,5 +234,6 @@ case $1 in
 *)
     start_logs
     single_page_site "$1" "$2"
+    sed -i "s|{{ base-path }}||g" "${BUILDDIR}/scripts/script.js"
     ;;
 esac
